@@ -42,15 +42,16 @@ const run = async () => {
         "Harvest-Account-ID": HARVEST_ACCOUNT_ID
       }
     });
-    let hours = 0;
+    let workedHours = 0;
     response.data.results.map(result => {
-      hours += result.billable_hours;
+      workedHours += result.billable_hours;
     });
 
-    const estimatedHours = (hours + (workingDaysLeft() * parseInt(WORKING_HOURS)));
+    const workedIncome = workedHours * parseInt(HOUR_RATE);
+    const estimatedHours = (workedHours + (workingDaysLeft() * parseInt(WORKING_HOURS)));
     const estimatedIncome = estimatedHours * parseInt(HOUR_RATE);
 
-    return { estimatedHours, estimatedIncome };
+    return { workedHours, workedIncome, estimatedHours, estimatedIncome };
   } catch (err) {
     console.log(err.message);
   }
