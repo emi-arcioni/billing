@@ -1,3 +1,5 @@
+const express = require("express");
+const app = express();
 require("dotenv").config();
 const axios = require("axios");
 const TelegramBot = require("node-telegram-bot-api");
@@ -109,4 +111,8 @@ bot.on("message", (msg) => {
       }
     });
   }
+});
+
+app.listen(80, () => {
+  console.log("App running");
 });
