@@ -116,3 +116,16 @@ bot.on("message", (msg) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("App running");
 });
+
+app.get("/", function (req, res) {
+  res.send({ message: "API Works!" });
+});
+
+if (process.env.APP_URL) {
+  setInterval(async () => {
+      try {
+        const response = await axios.get(process.env.APP_URL);
+        console.log(response.data);
+      } catch (err) {}
+  }, 300000); // every 5 minutes (300000)
+}
