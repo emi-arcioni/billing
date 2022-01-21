@@ -24,7 +24,7 @@ const formatCurrency = (amount) => {
 const formatDate = (date) => {
   const year = date.getFullYear();
   const month = `${date.getMonth() < 10 ? "0" : ""}${date.getMonth() + 1}`;
-  const day = `${date.getDate() < 10 ? "0" : ""}${date.getDate()}`;
+  const day = `${date.getUTCDate() < 10 ? "0" : ""}${date.getUTCDate()}`;
 
   return year + month + day;
 };
@@ -42,12 +42,13 @@ const workingDaysLeft = () => {
   const { lastDay } = getDates();
 
   let count = 0;
-  console.log(date);
-  for (let i = date.getDate() + 1; i <= lastDay.getDate(); i++) {
+  let from = date.getUTCDate();
+  if (date.getUTCHours() >= 18) from ++;
+
+  for (let i = from; i <= lastDay.getUTCDate(); i++) {
     const day = new Date(date.getFullYear(), date.getMonth(), i).getDay();
     count += day !== 0 && day !== 6 ? 1 : 0;
   }
-  console.log(count)
   return count;
 };
 
