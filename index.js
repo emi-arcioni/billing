@@ -42,11 +42,12 @@ const workingDaysLeft = () => {
   const { lastDay } = getDates();
 
   let count = 0;
+  console.log(date);
   for (let i = date.getDate() + 1; i <= lastDay.getDate(); i++) {
     const day = new Date(date.getFullYear(), date.getMonth(), i).getDay();
     count += day !== 0 && day !== 6 ? 1 : 0;
   }
-
+  console.log(count)
   return count;
 };
 
@@ -73,7 +74,6 @@ const calculate = async () => {
     const workedIncome = workedHours * parseInt(HOUR_RATE);
     const estimatedHours =
       workedHours + workingDaysLeft() * parseInt(WORKING_HOURS);
-    console.log({workedHours}, {workingDaysLeft: workingDaysLeft()}, {workingHours: parseInt(WORKING_HOURS)})
     const estimatedIncome = estimatedHours * parseInt(HOUR_RATE);
 
     return { workedHours, workedIncome, estimatedHours, estimatedIncome };
