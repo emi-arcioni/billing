@@ -73,6 +73,7 @@ const calculate = async () => {
     const workedIncome = workedHours * parseInt(HOUR_RATE);
     const estimatedHours =
       workedHours + workingDaysLeft() * parseInt(WORKING_HOURS);
+    console.log({workedHours}, {workingDaysLeft: workingDaysLeft()}, {workingHours: parseInt(WORKING_HOURS)})
     const estimatedIncome = estimatedHours * parseInt(HOUR_RATE);
 
     return { workedHours, workedIncome, estimatedHours, estimatedIncome };
