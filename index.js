@@ -71,6 +71,7 @@ const calculate = async () => {
     response.data.results.map((result) => {
       workedHours += result.billable_hours;
     });
+    workedHours = Math.round(workedHours);
 
     const workedIncome = workedHours * parseInt(HOUR_RATE);
     const estimatedHours =
