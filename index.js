@@ -1,11 +1,14 @@
-import { formatCurrency, calculate } from './calculate.js';
+import { formatCurrency, calculate } from "./calculate.js";
 
-calculate().then((data) => {
-  console.log(`*Worked current month*\n⏰${
-    data.workedHours
-  } hs 💵${formatCurrency(
-    data.workedIncome
-  )}\n*Monthly estimate*\n⏰${
-    data.estimatedHours
-  } hs 💵${formatCurrency(data.estimatedIncome)}`);
-});
+(async () => {
+  const { workedHours, workedIncome, estimatedHours, estimatedIncome } =
+    await calculate();
+  
+  console.log();
+  console.log("Worked current month");
+  console.log(`⏰${workedHours} hs -> 💵${formatCurrency(workedIncome)}`);
+  console.log();
+  console.log("Monthly estimate");
+  console.log(`⏰${estimatedHours} hs -> 💵${formatCurrency(estimatedIncome)}`);
+  console.log();
+})();
