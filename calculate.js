@@ -1,8 +1,12 @@
 import axios from "axios";
 import "dotenv/config";
 
-const { HARVEST_ACCOUNT_ID, HARVEST_ACCESS_TOKEN, HOUR_RATE, WORKING_HOURS } =
-  process.env;
+const {
+  HARVEST_ACCOUNT_ID,
+  HARVEST_ACCESS_TOKEN,
+  HOUR_RATE = +HOUR_RATE,
+  WORKING_HOURS = +WORKING_HOURS,
+} = process.env;
 
 const formatCurrency = (amount) => {
   const numberFormat = new Intl.NumberFormat("en-US", {
@@ -28,20 +32,25 @@ const getDates = () => {
   return { firstDay, lastDay };
 };
 
-const workingDaysLeft = () => {
+const workingDays = () => {
   const date = new Date();
   const { lastDay } = getDates();
 
-  let count = 0;
   let from = date.getUTCDate();
   if (date.getUTCHours() >= 18) from++;
 
-  for (let i = from; i <= lastDay.getUTCDate(); i++) {
+  let left = 0,
+    total = 0;
+  for (let i = 1; i <= lastDay.getUTCDate(); i++) {
     const day = new Date(date.getFullYear(), date.getMonth(), i).getDay();
-    count += day !== 0 && day !== 6 ? 1 : 0;
+    const sum = day !== 0 && day !== 6 ? 1 : 0;
+    if (i >= from) {
+      left += sum;
+    }
+    total += sum;
   }
 
-  return count;
+  return { left, total };
 };
 
 const calculate = async () => {
@@ -59,17 +68,36 @@ const calculate = async () => {
         },
       }
     );
+
     let workedHours = 0;
     response.data.results.map((result) => {
       workedHours += result.total_hours;
     });
 
-    const workedIncome = workedHours * parseInt(HOUR_RATE);
-    const estimatedHours =
-      workedHours + workingDaysLeft() * parseInt(WORKING_HOURS);
-    const estimatedIncome = estimatedHours * parseInt(HOUR_RATE);
+    const {
+      left: workingDaysLeft,
+      total: workingDaysTotal,
+      upto = workingDaysTotal - workingDaysLeft,
+    } = workingDays();
 
-    return { workedHours, workedIncome, estimatedHours, estimatedIncome };
+    const hoursFull = workingDaysTotal * WORKING_HOURS;
+    const hoursLeftFull = workedHours + workingDaysLeft * WORKING_HOURS;
+    const hoursAvg = workedHours + workingDaysLeft * (Math.round((workedHours / upto) * 10) / 10);
+
+    let worked = {
+      hours: workedHours,
+      income: workedHours * HOUR_RATE,
+    };
+    let estimated = {
+      hoursFull,
+      incomeFull: hoursFull * HOUR_RATE,
+      hoursLeftFull,
+      incomeLeftFull: hoursLeftFull * HOUR_RATE,
+      hoursAvg,
+      incomeAvg: hoursAvg * HOUR_RATE
+    };
+
+    return { worked, estimated };
   } catch (err) {
     console.log(err.message);
   }
